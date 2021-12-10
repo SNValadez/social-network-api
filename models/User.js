@@ -1,48 +1,77 @@
-const { Schema, model } = require('mongoose');
-const dateFormat = require('../utils/dateFormat');
+const { Schema, model } = require("mongoose");
+const dateFormat = require("../utils/dateFormat");
+const validator = require("validator");
+
+validator.isEmail("foo@bar.com");
 
 const UserSchema = new Schema(
-    {
-      userName: {
-        type: String
-      },
-      createdBy: {
-        type: String
-      },
-      createdAt: {
-        type: Date,
-        default: Date.now,
-        get: (createdAtVal) => dateFormat(createdAtVal)
-      },
-      size: {
-        type: String,
-        default: 'Large'
-      },
-      toppings: [],
-      comments: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Comment'
-        }
-      ]
+  {
+    userName: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
     },
-    {
-      toJSON: {
-        virtuals: true,
-        getters: true
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate(data) {
+        if (!validator.default.isEmail(data)) {
+          throw new Error("Not a valid e-mail!");
+        }
       },
-      id: false
-    }
-  );
+    },
+    thoughts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Thought",
+      },
+    ],
+
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    createdBy: {
+      type: String,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (createdAtVal) => dateFormat(createdAtVal),
+    },
+    size: {
+      type: String,
+      default: "Large",
+    },
+    toppings: [],
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+  },
+  {
+    toJSON: {
+      virtuals: true,
+      getters: true,
+    },
+    id: false,
+  }
+);
 
 // get total count of comments and replies on retrieval
-UserSchema.virtual('commentCount').get(function() {
-    return this.comments.reduce((total, comment) => total + comment.replies.length + 1, 0);
-  });
+UserSchema.virtual("friendCount").get(function () {
+  return this.friends.length;
+});
 
-  // create the Pizza model using the PizzaSchema
-const User = model('User', UserSchema);
-
+// create the User model
+const User = model("User", UserSchema);
 
 // export the User model
 module.exports = User;
