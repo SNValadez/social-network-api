@@ -8,4 +8,4 @@ router.use((req, res) => {
 router.use("/api", apiRoutes);
 
 
-module.exports = router
+module.exports = router;
