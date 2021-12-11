@@ -53,8 +53,38 @@ const thoughtController = {
         });
     },
 
+    updateThought({params, body}, res) {
+        Thought.findOneAndUpdate(
+            {_id: params.id}, body, 
+            {new: true, runValidators: true})
+        .populate({path: 'reactions', select: '-__v'})
+        .select('-___v')
+        .then(dbThoughtDa => {
+            if (!dbThoughtDa) {
+                res.status(404).json(
+                    {message: "No thoughts with this ID! Sorry!"});
+                return;
+            }
+                res.json(dbThoughtDa);
+        })
+        .catch(err => res.json(err));
+    },
 
-}
+    // Delete a current thought by ID
+    deleteThought({params}, res) {
+        Thought.findOneAndDelete(
+            {_id: params.id})
+        .then(dbThoughtDa => {
+            if (!dbThoughtDa) {
+                res.status(404).json(
+                    {message: "No thoughts with this ID! Sorry!"});
+                return;
+            }
+            res.json(dbThoughtDa);
+            })
+            .catch(err => res.status(400).json(err));
+    },
+};
 
 
 
