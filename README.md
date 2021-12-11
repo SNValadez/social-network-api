@@ -43,7 +43,7 @@ The application can also provide POST and DELETE methods for thought reactions a
 ## Installation
 
 - Please clone the GitHub repository to your local computer, etc.
-- Please do an "npm install" **(and npm init -y in case package.json is missing)**
+- Please do an `npm install` **(and `npm init -y` in case package.json is missing)**
 - Ensure Mongoose and Express are installed
-- Start the server by running "npm start"
+- Start the server by running `npm start`
 - Please change ports on the server.js in case PORT 3002 is in use
